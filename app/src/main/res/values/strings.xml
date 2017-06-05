@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">RealmTest</string>
+    <string name="addtxt">Add</string>
+    <string name="viewtxt">View</string>
+    <string name="deletetxt">Delete</string>
+    <string name="update">Update</string>
+    <string name="ok">Ok</string>
+    <string name="cancel">Cancel</string>
+</resources>
