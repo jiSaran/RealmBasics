@@ -1,10 +1,14 @@
 package com.saran.test.realmbasics.database;
 
 import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
 
 public class PhoneModel extends RealmObject {
-    public String type;
-    public String number;
+    private String type;
+    private String number;
+
+    @PrimaryKey
+    private int id;
 
     public void setType(String type) {
         this.type = type;
@@ -20,5 +24,13 @@ public class PhoneModel extends RealmObject {
 
     public String getNumber() {
         return number;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getId() {
+        return id;
     }
 }

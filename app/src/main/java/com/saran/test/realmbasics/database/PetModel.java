@@ -9,7 +9,7 @@ public class PetModel extends RealmObject {
     private String origin;
 
     @PrimaryKey
-    private String id;
+    private int id;
 
     public void setName(String name) {
         this.name = name;
@@ -35,11 +35,11 @@ public class PetModel extends RealmObject {
         return origin;
     }
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 }

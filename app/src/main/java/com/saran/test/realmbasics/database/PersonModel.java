@@ -44,7 +44,7 @@ public class PersonModel extends RealmObject {
         this.pets = pets;
     }
 
-    public List<PetModel> getPets() {
+    public RealmList<PetModel> getPets() {
         return pets;
     }
 
@@ -52,7 +52,7 @@ public class PersonModel extends RealmObject {
         this.phones = phones;
     }
 
-    public List<PhoneModel> getPhones() {
+    public RealmList<PhoneModel> getPhones() {
         return phones;
     }
 }

@@ -7,10 +7,8 @@ import android.support.annotation.NonNull;
 import android.widget.Toast;
 
 import com.saran.test.realmbasics.RealmBasicsApplication;
-import com.saran.test.realmbasics.OnPersonSizeChangedListener;
 
 import java.util.List;
-import java.util.UUID;
 
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
@@ -48,22 +46,30 @@ public class DBHelper {
             public void execute(Realm realm) {
                 if (pref != null) {
                     int id = pref.getInt("id", 0) + 1;
+                    int ph_id = pref.getInt("ph_id",0);
+                    int pt_id = pref.getInt("pt_id",0);
                     PersonModel person = realm.createObject(PersonModel.class, id); //Persisted on db
                     person.setName(name+id);
                     person.setAge(age);
                     for (int i=0; i<pets.size(); i++){
-                        PetModel pet = realm.createObject(PetModel.class, UUID.randomUUID().toString()); //UUID generates unique string
-                        pet.setName(pets.get(i).getName());
+                        pt_id++;
+                        PetModel pet = realm.createObject(PetModel.class,pt_id);
+                        pet.setName(pt_id+pets.get(i).getName());
                         pet.setType(pets.get(i).getType());
                         pet.setOrigin(pets.get(i).getOrigin());
                         person.getPets().add(pet); // get List and add pet
+
                     }
                     for (int i=0; i<phones.size(); i++){
-                        PhoneModel phone = realm.createObject(PhoneModel.class);
-                        phone.setNumber(phones.get(i).getNumber());
+                        ph_id++;
+                        PhoneModel phone = realm.createObject(PhoneModel.class,ph_id);
+                        phone.setNumber(ph_id+phones.get(i).getNumber());
                         phone.setType(phones.get(i).getType());
                         person.getPhones().add(phone);
+
                     }
+                    pref.edit().putInt("pt_id",pt_id).commit();
+                    pref.edit().putInt("ph_id",ph_id).commit();
                     pref.edit().putInt("id",id).commit();
                 }
             }
@@ -122,13 +128,78 @@ public class DBHelper {
     }
 
 
-    public void updatePerson(final int id, final String name){
+    public void updatePerson(final PersonModel personModel){
         //Update person name according to id
         mRealm.executeTransactionAsync(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                PersonModel person = realm.where(PersonModel.class).equalTo("id",id).findFirst(); //query should be inside transaction because update should be done in same thread
-                person.setName(name);
+                PersonModel person = realm.where(PersonModel.class).equalTo("id",personModel.getId()).findFirst(); //query should be inside transaction because update should be done in same thread
+                person.setName(personModel.getName());
+                person.setAge(personModel.getAge());
+                int phoneListSize = person.getPhones().size();
+                if(phoneListSize>=personModel.getPhones().size()){
+                    for (int i=0; i<phoneListSize; i++){
+                        int delete_index = 0;
+                        if(i<personModel.getPhones().size()){
+                            person.getPhones().set(i,personModel.getPhones().get(i));
+                            delete_index = i+1;
+                        } else {
+                            person.getPhones().get(delete_index).deleteFromRealm();
+                        }
+                    }
+                } else {
+                    int ph_id = pref.getInt("ph_id",0);
+                    boolean ph_id_changed = false;
+                    for (int i=0; i<personModel.getPhones().size(); i++){
+                        if(i>=phoneListSize){
+                            ph_id++;
+                            PhoneModel phone = realm.createObject(PhoneModel.class,ph_id);
+                            phone.setType(personModel.getPhones().get(i).getType());
+                            phone.setNumber(personModel.getPhones().get(i).getNumber());
+                            ph_id_changed = true;
+                            person.getPhones().add(phone);
+                        } else{
+                            person.getPhones().set(i,personModel.getPhones().get(i));
+                        }
+                    }
+                    if(ph_id_changed){
+                        pref.edit().putInt("ph_id",ph_id).commit();
+                    }
+                }
+
+                int petListSize = person.getPets().size();
+                if (petListSize>=personModel.getPets().size()){
+                    for (int i=0; i<petListSize; i++){
+                        int delete_index = 0;
+                        if(i<personModel.getPets().size()){
+                            delete_index = i+1;
+                            person.getPets().set(i,personModel.getPets().get(i));
+                        } else {
+                            person.getPets().get(delete_index).deleteFromRealm();
+                        }
+                    }
+                } else {
+                    int pt_id = pref.getInt("pt_id",0);
+                    boolean pt_id_changed = false;
+                    for(int i=0; i<personModel.getPets().size(); i++){
+                        if(i>=petListSize){
+                            pt_id++;
+                            PetModel pet = realm.createObject(PetModel.class,pt_id);
+                            pet.setName(personModel.getPets().get(i).getName());
+                            pet.setType(personModel.getPets().get(i).getType());
+                            pet.setOrigin(personModel.getPets().get(i).getOrigin());
+                            pt_id_changed = true;
+                            person.getPets().add(pet);
+                        } else {
+                            person.getPets().set(i,personModel.getPets().get(i));
+                        }
+
+                    }
+                    if(pt_id_changed){
+                        pref.edit().putInt("pt_id",pt_id).commit();
+                    }
+                }
+
             }
         }, new Realm.Transaction.OnSuccess() {
             @Override
@@ -207,6 +278,7 @@ public class DBHelper {
     }
 
     public PersonModel getPerson(int id){
+        //Query person whose id is given id
         PersonModel person = mRealm.where(PersonModel.class).equalTo("id",id).findFirst();
         return person;
     }

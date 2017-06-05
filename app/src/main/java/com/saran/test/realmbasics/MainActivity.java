@@ -1,6 +1,8 @@
 package com.saran.test.realmbasics;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
@@ -8,13 +10,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.saran.test.realmbasics.database.DBHelper;
+import com.saran.test.realmbasics.database.OnPersonSizeChangedListener;
 import com.saran.test.realmbasics.database.PersonModel;
 import com.saran.test.realmbasics.database.PetModel;
 import com.saran.test.realmbasics.database.PhoneModel;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import io.realm.RealmList;
 import io.realm.RealmResults;
@@ -23,6 +25,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private LinearLayout llContent;
     private Button btnAdd,btnView,btnDelete,btnUpdate;
     private DBHelper dbHelper;
+    private SharedPreferences pref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +33,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
 
         dbHelper = new DBHelper(this,this);
+        pref = PreferenceManager.getDefaultSharedPreferences(this);
 
         llContent = (LinearLayout)findViewById(R.id.ll_content);
         btnAdd = (Button)findViewById(R.id.btn_add);
@@ -59,7 +63,30 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             }
             case R.id.btn_update:{
-                dbHelper.updatePerson(3,"John");
+                RealmList<PetModel> pets = new RealmList<>();
+                RealmList<PhoneModel> phones = new RealmList<>();
+
+                for(int i=0; i<3; i++){
+                    PetModel pet = new PetModel();
+                    pet.setId(i+1);
+                    pet.setName("Tommy"+i);
+                    pet.setType("Dog"+i);
+                    pet.setOrigin("Mountains"+i);
+                    pets.add(pet);
+
+                    PhoneModel phone = new PhoneModel();
+                    phone.setId(i+1);
+                    phone.setNumber("01223456");
+                    phone.setType("Landline");
+                    phones.add(phone);
+                }
+                PersonModel personModel = new PersonModel();
+                personModel.setId(1);
+                personModel.setAge(30);
+                personModel.setName("Peter");
+                personModel.setPets(pets);
+                personModel.setPhones(phones);
+                dbHelper.updatePerson(personModel);
                 break;
             }
             case R.id.btn_view:{
@@ -90,7 +117,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 List<PetModel> pets = new ArrayList<>();
                 List<PhoneModel> phones = new ArrayList<>();
 
-                for(int i=0; i<3; i++){
+                for(int i=0; i<4; i++){
                     PetModel pet = new PetModel();
                     pet.setName("Tommy"+i);
                     pet.setType("Dog"+i);
@@ -108,22 +135,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             case 2:{
                 RealmList<PetModel> pets = new RealmList<>();
+                int pt_id = pref.getInt("pt_id",0);
                 for(int i=0; i<2; i++){
+                    pt_id++;
                     PetModel pet = new PetModel();
-                    pet.setId(UUID.randomUUID().toString());
+                    pet.setId(pt_id);
                     pet.setName("@Tauro"+i);
                     pet.setType("Bull"+i);
                     pet.setOrigin("Hills"+i);
                     pets.add(pet);
                 }
                 dbHelper.addPets(pets);
+                pref.edit().putInt("pt_id",pt_id).commit();
                 break;
             }
             case 3:{
                 PhoneModel phone = new PhoneModel();
+                int ph_id = pref.getInt("ph_id",0);
+                ph_id++;
+                phone.setId(ph_id);
                 phone.setNumber("981111222");
                 phone.setType("mobile");
                 dbHelper.addPhone(phone);
+                pref.edit().putInt("ph_id",ph_id).commit();
                 break;
             }
         }

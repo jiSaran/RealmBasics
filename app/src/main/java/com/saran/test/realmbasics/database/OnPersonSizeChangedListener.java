@@ -1,4 +1,4 @@
-package com.saran.test.realmbasics;
+package com.saran.test.realmbasics.database;
 
 import com.saran.test.realmbasics.database.PersonModel;
 

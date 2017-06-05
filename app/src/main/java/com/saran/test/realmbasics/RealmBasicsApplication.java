@@ -2,6 +2,8 @@ package com.saran.test.realmbasics;
 
 import android.app.Application;
 
+import com.saran.test.realmbasics.database.RealmMigrate;
+
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 
