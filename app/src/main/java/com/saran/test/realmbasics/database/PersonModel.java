@@ -1,4 +1,4 @@
-package com.saran.test.realmtest.database;
+package com.saran.test.realmbasics.database;
 
 import java.util.List;
 
@@ -6,15 +6,12 @@ import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
-/**
- * Created by core I5 on 2/21/2017.
- */
-
-public class Person extends RealmObject {
+//Should extend RealmObject to be added in database. This class acts as a table in sql.
+public class PersonModel extends RealmObject {
     private String name;
     private int age;
-    private RealmList<Pet> pets;
-    private RealmList<Phone> phones;
+    private RealmList<PetModel> pets;
+    private RealmList<PhoneModel> phones;
 
     @PrimaryKey
     private int id;
@@ -43,19 +40,19 @@ public class Person extends RealmObject {
         return id;
     }
 
-    public void setPets(RealmList<Pet> pets) {
+    public void setPets(RealmList<PetModel> pets) {
         this.pets = pets;
     }
 
-    public List<Pet> getPets() {
+    public List<PetModel> getPets() {
         return pets;
     }
 
-    public void setPhones(RealmList<Phone> phones) {
+    public void setPhones(RealmList<PhoneModel> phones) {
         this.phones = phones;
     }
 
-    public List<Phone> getPhones() {
+    public List<PhoneModel> getPhones() {
         return phones;
     }
 }

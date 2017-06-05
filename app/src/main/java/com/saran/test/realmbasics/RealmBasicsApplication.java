@@ -1,15 +1,13 @@
-package com.saran.test.realmtest;
+package com.saran.test.realmbasics;
 
 import android.app.Application;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 
-/**
- * Created by core I5 on 6/2/2017.
- */
+/** Class where realm configurations are set and initialized**/
 
-public class MyApplication extends Application {
+public class RealmBasicsApplication extends Application {
     private static Realm realm;
     @Override
     public void onCreate() {
@@ -18,7 +16,7 @@ public class MyApplication extends Application {
         RealmConfiguration configuration = new RealmConfiguration.Builder()
                 .name("mydb.realm")
                 .schemaVersion(2)
-                .migration(new MyMigration())
+                .migration(new RealmMigrate()) //Use RealmMigrate class to migrate data on schema version change
                 .build();
         Realm.setDefaultConfiguration(configuration);
         realm = Realm.getDefaultInstance();

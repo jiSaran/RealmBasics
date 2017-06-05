@@ -1,17 +1,16 @@
-package com.saran.test.realmtest;
+package com.saran.test.realmbasics;
 
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.saran.test.realmtest.database.MyDB;
-import com.saran.test.realmtest.database.Person;
-import com.saran.test.realmtest.database.Pet;
-import com.saran.test.realmtest.database.Phone;
+import com.saran.test.realmbasics.database.DBHelper;
+import com.saran.test.realmbasics.database.PersonModel;
+import com.saran.test.realmbasics.database.PetModel;
+import com.saran.test.realmbasics.database.PhoneModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,14 +22,14 @@ import io.realm.RealmResults;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, OnPersonSizeChangedListener {
     private LinearLayout llContent;
     private Button btnAdd,btnView,btnDelete,btnUpdate;
-    private MyDB myDB;
+    private DBHelper dbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        myDB = new MyDB(this,this);
+        dbHelper = new DBHelper(this,this);
 
         llContent = (LinearLayout)findViewById(R.id.ll_content);
         btnAdd = (Button)findViewById(R.id.btn_add);
@@ -47,31 +46,40 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     protected void onDestroy() {
-        myDB.removeChangeListener();
-        myDB.closeRealm();
+        dbHelper.removeChangeListener();
+        dbHelper.closeRealm();
         super.onDestroy();
     }
 
     @Override
     public void onClick(View view) {
-        if(view.getId() == btnAdd.getId()){
-            addData(3);
-        } else if(view.getId() == btnView.getId()){
-            viewData();
-        } else if(view.getId() == btnDelete.getId()){
-            deleteData(1);
-        } else if(view.getId() == btnUpdate.getId()){
-            myDB.updatePerson(3,"John");
+        switch (view.getId()){
+            case R.id.btn_add:{
+                addData(1);
+                break;
+            }
+            case R.id.btn_update:{
+                dbHelper.updatePerson(3,"John");
+                break;
+            }
+            case R.id.btn_view:{
+                viewData();
+                break;
+            }
+            case R.id.btn_delete:{
+                deleteData(1);
+                break;
+            }
         }
     }
 
     private void deleteData(int i) {
         switch (i){
             case 1:{
-                myDB.deletePerson(1);
+                dbHelper.deletePerson(1);
             }
             case 2:{
-                myDB.deleteMobilePhones();
+                dbHelper.deleteMobilePhones();
             }
         }
     }
@@ -79,43 +87,43 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void addData(int id) {
         switch (id){
             case 1:{
-                List<Pet> pets = new ArrayList<>();
-                List<Phone> phones = new ArrayList<>();
+                List<PetModel> pets = new ArrayList<>();
+                List<PhoneModel> phones = new ArrayList<>();
 
                 for(int i=0; i<3; i++){
-                    Pet pet = new Pet();
+                    PetModel pet = new PetModel();
                     pet.setName("Tommy"+i);
                     pet.setType("Dog"+i);
                     pet.setOrigin("Mountains"+i);
                     pets.add(pet);
 
-                    Phone phone = new Phone();
+                    PhoneModel phone = new PhoneModel();
                     phone.setNumber("01223456");
                     phone.setType("Landline");
                     phones.add(phone);
                 }
-                myDB.addPerson("Peter",24,pets,phones);
+                dbHelper.addPerson("Peter",24,pets,phones);
                 break;
             }
 
             case 2:{
-                RealmList<Pet> pets = new RealmList<>();
+                RealmList<PetModel> pets = new RealmList<>();
                 for(int i=0; i<2; i++){
-                    Pet pet = new Pet();
+                    PetModel pet = new PetModel();
                     pet.setId(UUID.randomUUID().toString());
                     pet.setName("@Tauro"+i);
                     pet.setType("Bull"+i);
                     pet.setOrigin("Hills"+i);
                     pets.add(pet);
                 }
-                myDB.addPets(pets);
+                dbHelper.addPets(pets);
                 break;
             }
             case 3:{
-                Phone phone = new Phone();
+                PhoneModel phone = new PhoneModel();
                 phone.setNumber("981111222");
                 phone.setType("mobile");
-                myDB.addPhone(phone);
+                dbHelper.addPhone(phone);
                 break;
             }
         }
@@ -125,9 +133,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void viewData() {
         ViewDataFragment viewDataFragment = ViewDataFragment.getInstance(this, new ViewDataFragment.OnDialogSetListenter() {
             @Override
-            public void onDialogSet(ViewDataFragment viewDataFragment, long index) {
+            public void onDialogSet(long index) {
                 if(index == 0){
-                    RealmResults<Pet> pets = myDB.queryPets();
+                    RealmResults<PetModel> pets = dbHelper.queryPets();
                     llContent.removeAllViews();
                     if(pets!=null && pets.size()>0){
                         for(int i = 0; i<pets.size(); i++){
@@ -135,7 +143,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         }
                     }
                 } else if(index == 1){
-                    RealmResults<Phone> phones = myDB.queryLandlinePhone();
+                    RealmResults<PhoneModel> phones = dbHelper.queryLandlinePhone();
                     llContent.removeAllViews();
                     if(phones!=null && phones.size()>0){
                         for (int i=0; i<phones.size(); i++){
@@ -143,12 +151,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         }
                     }
                 } else if(index == 2){
-                    RealmResults<Phone> phones = myDB.queryMobilePhone();
+                    RealmResults<PhoneModel> phones = dbHelper.queryMobilePhone();
                     llContent.removeAllViews();
                     if(phones!=null && phones.size()>0){
                         for (int i=0; i<phones.size(); i++){
                             populateData(phones.get(i).getNumber());
                         }
+                    }
+                } else if(index == 3){
+                    PersonModel person = dbHelper.getPerson(1);
+                    llContent.removeAllViews();
+                    if(person!=null){
+                        populateData(((Integer)person.getId()).toString());
+                        populateData(person.getName());
+                        populateData(((Integer)person.getAge()).toString());
                     }
                 }
             }
@@ -163,7 +179,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
-    public void onDataChangedListener(RealmResults<Person> personRealmResults) {
+    public void onDataChangedListener(RealmResults<PersonModel> personRealmResults) {
         llContent.removeAllViews();
         for(int i=0; i<personRealmResults.size(); i++){
             populateData(personRealmResults.get(i).getName());

@@ -1,4 +1,4 @@
-package com.saran.test.realmtest;
+package com.saran.test.realmbasics;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

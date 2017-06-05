@@ -1,4 +1,4 @@
-package com.saran.test.realmtest.database;
+package com.saran.test.realmbasics.database;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -6,8 +6,8 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.widget.Toast;
 
-import com.saran.test.realmtest.MyApplication;
-import com.saran.test.realmtest.OnPersonSizeChangedListener;
+import com.saran.test.realmbasics.RealmBasicsApplication;
+import com.saran.test.realmbasics.OnPersonSizeChangedListener;
 
 import java.util.List;
 import java.util.UUID;
@@ -17,50 +17,49 @@ import io.realm.RealmChangeListener;
 import io.realm.RealmList;
 import io.realm.RealmResults;
 
-/**
- * Created by core I5 on 5/25/2017.
- */
+/** Helper class for various operations on Database**/
 
-public class MyDB {
+public class DBHelper {
     private Context mContext;
     private Realm mRealm;
     private SharedPreferences pref;
-    private RealmChangeListener<RealmResults<Person>> changeListener;
-    private RealmResults<Person> personRealmResults;
+    private RealmChangeListener<RealmResults<PersonModel>> changeListener;
+    private RealmResults<PersonModel> personRealmResults;
 
-    public MyDB(Context context, final OnPersonSizeChangedListener listener){
+    public DBHelper(Context context, final OnPersonSizeChangedListener listener){
         mContext = context;
-        mRealm = MyApplication.getRealmInstance();
+        mRealm = RealmBasicsApplication.getRealmInstance();
         pref = PreferenceManager.getDefaultSharedPreferences(mContext);
 
-        changeListener = new RealmChangeListener<RealmResults<Person>>() {
+        //Register new listener for reactive approach in PersonModel(realm object)
+        changeListener = new RealmChangeListener<RealmResults<PersonModel>>() {
             @Override
-            public void onChange(RealmResults<Person> o) {
+            public void onChange(RealmResults<PersonModel> o) {
                 listener.onDataChangedListener(o);
             }
         };
-        personRealmResults = mRealm.where(Person.class).findAllSortedAsync("name");
+        personRealmResults = mRealm.where(PersonModel.class).findAllSortedAsync("name"); //Query all data of PersonModel
         personRealmResults.addChangeListener(changeListener);
     }
 
-    public void addPerson(@NonNull final String name, @NonNull final int age, @NonNull final List<Pet> pets, @NonNull final List<Phone> phones){
+    public void addPerson(@NonNull final String name, @NonNull final int age, @NonNull final List<PetModel> pets, @NonNull final List<PhoneModel> phones){
         mRealm.executeTransactionAsync(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
                 if (pref != null) {
                     int id = pref.getInt("id", 0) + 1;
-                    Person person = realm.createObject(Person.class, id); //Persisted on db
+                    PersonModel person = realm.createObject(PersonModel.class, id); //Persisted on db
                     person.setName(name+id);
                     person.setAge(age);
                     for (int i=0; i<pets.size(); i++){
-                        Pet pet = realm.createObject(Pet.class, UUID.randomUUID().toString()); //UUID generates unique string
+                        PetModel pet = realm.createObject(PetModel.class, UUID.randomUUID().toString()); //UUID generates unique string
                         pet.setName(pets.get(i).getName());
                         pet.setType(pets.get(i).getType());
                         pet.setOrigin(pets.get(i).getOrigin());
                         person.getPets().add(pet); // get List and add pet
                     }
                     for (int i=0; i<phones.size(); i++){
-                        Phone phone = realm.createObject(Phone.class);
+                        PhoneModel phone = realm.createObject(PhoneModel.class);
                         phone.setNumber(phones.get(i).getNumber());
                         phone.setType(phones.get(i).getType());
                         person.getPhones().add(phone);
@@ -71,7 +70,7 @@ public class MyDB {
         }, new Realm.Transaction.OnSuccess() {
             @Override
             public void onSuccess() {
-                Toast.makeText(mContext, "Person added successfully!!!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(mContext, "PersonModel added successfully!!!", Toast.LENGTH_SHORT).show();
             }
         }, new Realm.Transaction.OnError() {
             @Override
@@ -82,7 +81,7 @@ public class MyDB {
         });
     }
 
-    public void addPets(final RealmList<Pet> petList){
+    public void addPets(final RealmList<PetModel> petList){
         mRealm.executeTransactionAsync(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
@@ -91,7 +90,7 @@ public class MyDB {
         }, new Realm.Transaction.OnSuccess() {
             @Override
             public void onSuccess() {
-                Toast.makeText(mContext, "Pet added successfully!!!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(mContext, "PetModel added successfully!!!", Toast.LENGTH_SHORT).show();
             }
         }, new Realm.Transaction.OnError() {
             @Override
@@ -102,7 +101,7 @@ public class MyDB {
         });
     }
 
-    public void addPhone(final Phone phone){
+    public void addPhone(final PhoneModel phone){
         mRealm.executeTransactionAsync(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
@@ -111,7 +110,7 @@ public class MyDB {
         }, new Realm.Transaction.OnSuccess() {
             @Override
             public void onSuccess() {
-                Toast.makeText(mContext, "Phone added successfully!!!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(mContext, "PhoneModel added successfully!!!", Toast.LENGTH_SHORT).show();
             }
         }, new Realm.Transaction.OnError() {
             @Override
@@ -124,16 +123,17 @@ public class MyDB {
 
 
     public void updatePerson(final int id, final String name){
+        //Update person name according to id
         mRealm.executeTransactionAsync(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                Person person = realm.where(Person.class).equalTo("id",id).findFirst(); //query should be inside transaction because it can only be changed in same thread
+                PersonModel person = realm.where(PersonModel.class).equalTo("id",id).findFirst(); //query should be inside transaction because update should be done in same thread
                 person.setName(name);
             }
         }, new Realm.Transaction.OnSuccess() {
             @Override
             public void onSuccess() {
-                Toast.makeText(mContext, "Person updated successfully!!!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(mContext, "PersonModel updated successfully!!!", Toast.LENGTH_SHORT).show();
             }
         }, new Realm.Transaction.OnError() {
             @Override
@@ -145,10 +145,11 @@ public class MyDB {
     }
 
     public void deleteMobilePhones(){
+        //Delete all the mobile phone data
         mRealm.executeTransactionAsync(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                RealmResults<Phone> phones = realm.where(Phone.class).equalTo("type","mobile").findAll();
+                RealmResults<PhoneModel> phones = realm.where(PhoneModel.class).equalTo("type","mobile").findAll();
                 phones.deleteAllFromRealm();
             }
         }, new Realm.Transaction.OnSuccess() {
@@ -166,16 +167,17 @@ public class MyDB {
     }
 
     public void deletePerson(final int id){
+        //Delete person according to id
         mRealm.executeTransactionAsync(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                Person person = realm.where(Person.class).equalTo("id",id).findFirst();
+                PersonModel person = realm.where(PersonModel.class).equalTo("id",id).findFirst();
                 person.deleteFromRealm();
             }
         }, new Realm.Transaction.OnSuccess() {
             @Override
             public void onSuccess() {
-                Toast.makeText(mContext, "Person deleted successfully!!!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(mContext, "PersonModel deleted successfully!!!", Toast.LENGTH_SHORT).show();
             }
         }, new Realm.Transaction.OnError() {
             @Override
@@ -186,19 +188,27 @@ public class MyDB {
         });
     }
 
-    public RealmResults<Pet> queryPets(){
-        RealmResults<Pet> pets = mRealm.where(Pet.class).findAll();
+    public RealmResults<PetModel> queryPets(){
+        //Query all the pets
+        RealmResults<PetModel> pets = mRealm.where(PetModel.class).findAll();
         return pets;
     }
 
-    public RealmResults<Phone> queryLandlinePhone(){
-        RealmResults<Phone> phones = mRealm.where(Phone.class).equalTo("type","Landline").findAll();
+    public RealmResults<PhoneModel> queryLandlinePhone(){
+        //Query phone whose type is landline
+        RealmResults<PhoneModel> phones = mRealm.where(PhoneModel.class).equalTo("type","Landline").findAll();
         return phones;
     }
 
-    public RealmResults<Phone> queryMobilePhone(){
-        RealmResults<Phone> phones = mRealm.where(Phone.class).equalTo("type","mobile").findAll();
+    public RealmResults<PhoneModel> queryMobilePhone(){
+        //Query phone whose type is mobile
+        RealmResults<PhoneModel> phones = mRealm.where(PhoneModel.class).equalTo("type","mobile").findAll();
         return phones;
+    }
+
+    public PersonModel getPerson(int id){
+        PersonModel person = mRealm.where(PersonModel.class).equalTo("id",id).findFirst();
+        return person;
     }
 
     public void closeRealm(){

@@ -1,12 +1,8 @@
-package com.saran.test.realmtest.database;
+package com.saran.test.realmbasics.database;
 
 import io.realm.RealmObject;
 
-/**
- * Created by core I5 on 5/23/2017.
- */
-
-public class Phone extends RealmObject {
+public class PhoneModel extends RealmObject {
     public String type;
     public String number;
 
