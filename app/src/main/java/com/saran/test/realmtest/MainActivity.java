@@ -1,6 +1,5 @@
 package com.saran.test.realmtest;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
@@ -25,7 +24,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private LinearLayout llContent;
     private Button btnAdd,btnView,btnDelete,btnUpdate;
     private MyDB myDB;
-    private SharedPreferences pref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,8 +37,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btnView = (Button)findViewById(R.id.btn_view);
         btnDelete = (Button)findViewById(R.id.btn_delete);
         btnUpdate = (Button)findViewById(R.id.btn_update);
-
-        pref = PreferenceManager.getDefaultSharedPreferences(this);
 
         btnAdd.setOnClickListener(this);
         btnView.setOnClickListener(this);
