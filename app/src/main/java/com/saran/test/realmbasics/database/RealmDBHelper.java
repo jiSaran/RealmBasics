@@ -306,6 +306,12 @@ public class RealmDBHelper {
         return person;
     }
 
+    public RealmResults<PersonModel> getPersonBetweenAge(int fromAge, int toAge){
+        //Query persons whose age is in between given boundary ages
+        RealmResults<PersonModel> persons = mRealm.where(PersonModel.class).between("age",fromAge,toAge).findAll();
+        return persons;
+    }
+
     public void closeRealm(){
         mRealm.close();
     }

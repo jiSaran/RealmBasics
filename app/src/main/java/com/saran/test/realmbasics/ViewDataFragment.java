@@ -22,7 +22,7 @@ public class ViewDataFragment extends DialogFragment implements View.OnClickList
     private OnDialogSetListenter dialogSetListenter;
     private Button btnOkView, btnCancelView;
     private Spinner spViewData;
-    private ArrayList<String> list = new ArrayList<>(Arrays.asList("Pets","LandlinePhones","MobilePhones","Person"));
+    private ArrayList<String> list = new ArrayList<>(Arrays.asList("Pets","LandlinePhones","MobilePhones","Person","Multi-person"));
 
     public ViewDataFragment(){}
 

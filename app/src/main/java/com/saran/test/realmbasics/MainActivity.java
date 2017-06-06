@@ -149,7 +149,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     phone.setType("Landline");
                     phones.add(phone);
                 }
-                dbHelper.addPerson("Peter",24,pets,phones);
+                int age = pref.getInt("id", 0) + 1;
+                dbHelper.addPerson("Peter",24+age,pets,phones);
                 break;
             }
 
@@ -226,6 +227,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         populateData("Phone");
                         for (int i=0; i<person.getPhones().size(); i++){
                             populateData(person.getPhones().get(i).getNumber());
+                        }
+                    }
+                } else if(index == 4){
+                    RealmResults<PersonModel> personModels = dbHelper.getPersonBetweenAge(24,26);
+                    llContent.removeAllViews();
+                    if(personModels!=null && personModels.size()>0){
+                        for(int i=0; i<personModels.size(); i++){
+                            populateData(personModels.get(i).getName()+" "+personModels.get(i).getAge());
                         }
                     }
                 }
