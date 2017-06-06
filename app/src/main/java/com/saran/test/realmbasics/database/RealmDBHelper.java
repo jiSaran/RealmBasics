@@ -76,7 +76,7 @@ public class RealmDBHelper {
         }, new Realm.Transaction.OnSuccess() {
             @Override
             public void onSuccess() {
-                Toast.makeText(mContext, "PersonModel added successfully!!!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(mContext, "Person added successfully!!!", Toast.LENGTH_SHORT).show();
             }
         }, new Realm.Transaction.OnError() {
             @Override
@@ -96,7 +96,7 @@ public class RealmDBHelper {
         }, new Realm.Transaction.OnSuccess() {
             @Override
             public void onSuccess() {
-                Toast.makeText(mContext, "PetModel added successfully!!!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(mContext, "Pet added successfully!!!", Toast.LENGTH_SHORT).show();
             }
         }, new Realm.Transaction.OnError() {
             @Override
@@ -116,7 +116,7 @@ public class RealmDBHelper {
         }, new Realm.Transaction.OnSuccess() {
             @Override
             public void onSuccess() {
-                Toast.makeText(mContext, "PhoneModel added successfully!!!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(mContext, "Phone added successfully!!!", Toast.LENGTH_SHORT).show();
             }
         }, new Realm.Transaction.OnError() {
             @Override
@@ -204,7 +204,7 @@ public class RealmDBHelper {
         }, new Realm.Transaction.OnSuccess() {
             @Override
             public void onSuccess() {
-                Toast.makeText(mContext, "PersonModel updated successfully!!!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(mContext, "Person updated successfully!!!", Toast.LENGTH_SHORT).show();
             }
         }, new Realm.Transaction.OnError() {
             @Override
@@ -227,7 +227,7 @@ public class RealmDBHelper {
         }, new Realm.Transaction.OnSuccess() {
             @Override
             public void onSuccess() {
-                Toast.makeText(mContext, "Pet update successfully!!!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(mContext, "Pet updated successfully!!!", Toast.LENGTH_SHORT).show();
             }
         }, new Realm.Transaction.OnError() {
             @Override
@@ -271,7 +271,7 @@ public class RealmDBHelper {
         }, new Realm.Transaction.OnSuccess() {
             @Override
             public void onSuccess() {
-                Toast.makeText(mContext, "PersonModel deleted successfully!!!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(mContext, "Person deleted successfully!!!", Toast.LENGTH_SHORT).show();
             }
         }, new Realm.Transaction.OnError() {
             @Override

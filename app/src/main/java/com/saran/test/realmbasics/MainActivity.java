@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             }
             case R.id.btn_update:{
-                update(2);
+                updateData(2);
                 break;
             }
             case R.id.btn_view:{
@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private void update(int id){
+    private void updateData(int id){
         switch (id){
             case 1:{
                 RealmList<PetModel> pets = new RealmList<>();
