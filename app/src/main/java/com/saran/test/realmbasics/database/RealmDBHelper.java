@@ -17,14 +17,14 @@ import io.realm.RealmResults;
 
 /** Helper class for various operations on Database**/
 
-public class DBHelper {
+public class RealmDBHelper {
     private Context mContext;
     private Realm mRealm;
     private SharedPreferences pref;
     private RealmChangeListener<RealmResults<PersonModel>> changeListener;
     private RealmResults<PersonModel> personRealmResults;
 
-    public DBHelper(Context context, final OnPersonSizeChangedListener listener){
+    public RealmDBHelper(Context context, final OnPersonSizeChangedListener listener){
         mContext = context;
         mRealm = RealmBasicsApplication.getRealmInstance();
         pref = PreferenceManager.getDefaultSharedPreferences(mContext);

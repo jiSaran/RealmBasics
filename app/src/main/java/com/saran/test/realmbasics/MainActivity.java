@@ -9,7 +9,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.saran.test.realmbasics.database.DBHelper;
+import com.saran.test.realmbasics.database.RealmDBHelper;
 import com.saran.test.realmbasics.database.OnPersonSizeChangedListener;
 import com.saran.test.realmbasics.database.PersonModel;
 import com.saran.test.realmbasics.database.PetModel;
@@ -24,7 +24,7 @@ import io.realm.RealmResults;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, OnPersonSizeChangedListener {
     private LinearLayout llContent;
     private Button btnAdd,btnView,btnDelete,btnUpdate;
-    private DBHelper dbHelper;
+    private RealmDBHelper dbHelper;
     private SharedPreferences pref;
 
     @Override
@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        dbHelper = new DBHelper(this,this);
+        dbHelper = new RealmDBHelper(this,this);
         pref = PreferenceManager.getDefaultSharedPreferences(this);
 
         llContent = (LinearLayout)findViewById(R.id.ll_content);
