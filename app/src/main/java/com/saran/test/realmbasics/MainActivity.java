@@ -63,6 +63,36 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             }
             case R.id.btn_update:{
+                update(2);
+                break;
+            }
+            case R.id.btn_view:{
+                viewData();
+                break;
+            }
+            case R.id.btn_delete:{
+                deleteData(1);
+                break;
+            }
+        }
+    }
+
+    private void deleteData(int i) {
+        switch (i){
+            case 1:{
+                dbHelper.deletePerson(1);
+                break;
+            }
+            case 2:{
+                dbHelper.deleteMobilePhones();
+                break;
+            }
+        }
+    }
+
+    private void update(int id){
+        switch (id){
+            case 1:{
                 RealmList<PetModel> pets = new RealmList<>();
                 RealmList<PhoneModel> phones = new RealmList<>();
 
@@ -89,24 +119,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 dbHelper.updatePerson(personModel);
                 break;
             }
-            case R.id.btn_view:{
-                viewData();
-                break;
-            }
-            case R.id.btn_delete:{
-                deleteData(1);
-                break;
-            }
-        }
-    }
-
-    private void deleteData(int i) {
-        switch (i){
-            case 1:{
-                dbHelper.deletePerson(1);
-            }
             case 2:{
-                dbHelper.deleteMobilePhones();
+                PetModel pet = new PetModel();
+                pet.setId(1);
+                pet.setName("Molly");
+                pet.setType("Snake");
+                pet.setOrigin("Jungle");
+                dbHelper.updatePet(pet);
+                break;
             }
         }
     }
@@ -199,6 +219,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         populateData(((Integer)person.getId()).toString());
                         populateData(person.getName());
                         populateData(((Integer)person.getAge()).toString());
+                        populateData("Pets");
+                        for(int i=0; i<person.getPets().size();i++){
+                            populateData(person.getPets().get(i).getName());
+                        }
+                        populateData("Phone");
+                        for (int i=0; i<person.getPhones().size(); i++){
+                            populateData(person.getPhones().get(i).getNumber());
+                        }
                     }
                 }
             }
