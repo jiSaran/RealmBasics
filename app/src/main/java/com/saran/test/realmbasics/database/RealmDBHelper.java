@@ -215,6 +215,29 @@ public class RealmDBHelper {
         });
     }
 
+    public void updatePet(final PetModel mPet){
+        mRealm.executeTransactionAsync(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                PetModel pet = realm.where(PetModel.class).equalTo("id", mPet.getId()).findFirst();
+                pet.setName(mPet.getName());
+                pet.setType(mPet.getType());
+                pet.setOrigin(mPet.getOrigin());
+            }
+        }, new Realm.Transaction.OnSuccess() {
+            @Override
+            public void onSuccess() {
+                Toast.makeText(mContext, "Pet update successfully!!!", Toast.LENGTH_SHORT).show();
+            }
+        }, new Realm.Transaction.OnError() {
+            @Override
+            public void onError(Throwable error) {
+                Toast.makeText(mContext, "Error occurred!!!",Toast.LENGTH_SHORT).show();
+                error.printStackTrace();
+            }
+        });
+    }
+
     public void deleteMobilePhones(){
         //Delete all the mobile phone data
         mRealm.executeTransactionAsync(new Realm.Transaction() {
