@@ -31,4 +31,8 @@ public class RealmBasicsApplication extends Application {
             return Realm.getDefaultInstance();
         }
     }
+
+    public static void closeRealm(){
+        realm.close();
+    }
 }

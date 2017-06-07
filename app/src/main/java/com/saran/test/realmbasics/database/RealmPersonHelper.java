@@ -194,14 +194,7 @@ public class RealmPersonHelper {
         return persons;
     }
 
-    public void closeRealm(){
-        mRealm.close();
-        petHelper.closeRealm();
-        phoneHelper.closeRealm();
-    }
-
     public void removeChangeListener(){
         personRealmResults.removeChangeListener(changeListener);
     }
-
 }

@@ -124,8 +124,4 @@ public class RealmPhoneHelper {
         RealmResults<PhoneModel> phones = mRealm.where(PhoneModel.class).equalTo("type","Landline").findAll();
         return phones;
     }
-
-    public void closeRealm(){
-        mRealm.close();
-    }
 }

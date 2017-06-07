@@ -57,9 +57,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onDestroy() {
         personHelper.removeChangeListener();
-        personHelper.closeRealm();
-        phoneHelper.closeRealm();
-        petHelper.closeRealm();
+        RealmBasicsApplication.closeRealm();
         super.onDestroy();
     }
 

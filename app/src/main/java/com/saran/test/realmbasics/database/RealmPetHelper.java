@@ -112,8 +112,4 @@ public class RealmPetHelper {
         RealmResults<PetModel> pets = mRealm.where(PetModel.class).findAll();
         return pets;
     }
-
-    public void closeRealm(){
-        mRealm.close();
-    }
 }
